@@ -3,7 +3,7 @@
 ## Usage
 
 ```
-% heroku create --stack cedar --buildpack https://github.com/jordansissel/heroku-buildpack-meteor.git
+% heroku create --stack cedar --buildpack https://github.com/asyazwan/heroku-buildpack-meteor.git
 ```
 
 ## Example
@@ -32,12 +32,13 @@ Initialized empty Git repository in /tmp/a/wordplay/.git/
 Create your heroku app
 
 ```
-% heroku create --stack cedar --buildpack https://github.com/jordansissel/heroku-buildpack-meteor.git
+% heroku create --stack cedar --buildpack https://github.com/asyazwan/heroku-buildpack-meteor.git
 ```
 
-Configure your ROOT_URL setting
+Configure your ROOT_URL and MONGOLAB_URI settings
 ```
 % heroku config:add ROOT_URL=<insert_url_created_above_here>
+% heroku config:add MONGOLAB_URI=<insert_mongolab_uri_here>
 ```
 
 Deploy it
