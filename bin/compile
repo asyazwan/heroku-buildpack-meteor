@@ -2,36 +2,19 @@
 
 BUILD_DIR=$1
 CACHE_DIR=$2
-METEOR_HOME=$BUILD_DIR/.meteor/local
-PATH=$METEOR_HOME/usr/bin:$METEOR_HOME/usr/lib/meteor/bin:$PATH
+METEOR_HOME=$BUILD_DIR/.meteor/checkout
+PATH=$METEOR_HOME:$PATH
 
-# Unfortunately heroku buildpacks don't let you pass parameters
-# to this script, so if you want to change the version of meteor,
-# you'll have to fork and hard-code this.
-METEOR_VERSION=0.6.0
-
-fetch_meteor() {
-  if [ -f "$METEOR_HOME/usr/bin/meteor" ] ; then
-    # Skip if meteor is already fetched
-    return
-  fi
-
-
-  PACKAGE=meteor_${METEOR_VERSION}-1_amd64.deb
-
-  echo "Fetching meteor deb package"
-  curl -o "$CACHE_DIR/$PACKAGE" "http://d3sqy0vbqsdhku.cloudfront.net/${PACKAGE}"
-
-  echo "Unpacking meteor"
-  [ ! -d "$METEOR_HOME" ] && mkdir -p "$METEOR_HOME"
-  ar p "$CACHE_DIR/$PACKAGE" data.tar.gz | tar -C "$METEOR_HOME" -zxf -
+install_meteor() {
+  cd $BUILD_DIR
+  echo "Installing meteor"
+  git clone git://github.com/meteor/meteor.git $METEOR_HOME
 }
 
 build() {
-  ( 
-    cd $BUILD_DIR
+  (
     echo "Building meteor bundle"
-    meteor bundle $CACHE_DIR/bundle.tar.gz 
+    meteor bundle $CACHE_DIR/bundle.tar.gz
     mkdir -p $BUILD_DIR/.meteor/local/build
     tar -zxf $CACHE_DIR/bundle.tar.gz --strip-components 1 -C $BUILD_DIR/.meteor/local/build
     rm $CACHE_DIR/bundle.tar.gz
@@ -41,7 +24,7 @@ build() {
 [ ! -d $BUILD_DIR ] && mkdir $BUILD_DIR
 [ ! -d $CACHE_DIR ] && mkdir $CACHE_DIR
 
-fetch_meteor
+install_meteor
 build
 
 echo "Checking for post_compile script"
